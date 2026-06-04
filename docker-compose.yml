@@ -1,0 +1,51 @@
+services:
+
+  db:
+    image: postgres:16
+
+    environment:
+      POSTGRES_DB: saas_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: manju
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+
+    env_file:
+    - .env
+
+    command: gunicorn --bind 0.0.0.0:8000 multi_tenant.wsgi:application
+
+    volumes:
+      - .:/app
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db
+      
+
+  nginx:
+    image: nginx:latest
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+
+
+  
