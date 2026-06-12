@@ -15,6 +15,15 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      SECRET_KEY: this-is-a-very-long-secret-key-for-testing-only-123456
+      DEBUG: True
+      DB_NAME: test_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+
     steps:
 
       - name: Checkout Code
@@ -30,14 +39,13 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Django Checks
-        env:
-            SECRET_KEY: test-secret-key
-            DEBUG: True
-            DB_NAME: test_db
-            DB_USER: postgres
-            DB_PASSWORD: postgres
-            DB_HOST: localhost
-            DB_PORT: 5432
-
         run: |
           python manage.py check
+
+      - name: Run Tests
+        run: |
+          python manage.py test
+
+      - name: Build Docker Image
+        run: |
+          docker build -t multi-tenant-saas-api .
