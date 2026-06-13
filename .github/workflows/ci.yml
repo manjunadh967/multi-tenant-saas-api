@@ -15,6 +15,24 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+
+        env:
+          POSTGRES_DB: saas_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: manju
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       SECRET_KEY: this-is-a-very-long-secret-key-for-testing-only-123456
       DEBUG: True
@@ -23,6 +41,7 @@ jobs:
       DB_PASSWORD: postgres
       DB_HOST: localhost
       DB_PORT: 5432
+
 
     steps:
 
